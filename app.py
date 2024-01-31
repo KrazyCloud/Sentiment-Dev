@@ -1,7 +1,9 @@
 import re
-import streamlit as st
+from flask import Flask, render_template, request, jsonify
 from transformers import BertTokenizer, BertForSequenceClassification, pipeline
 from torch.nn.functional import softmax
+
+app = Flask(__name__)
 
 # Load pre-trained BERT model and tokenizer
 model_name = 'bert-base-uncased'
@@ -57,24 +59,16 @@ def analyze_tweet(tweet):
         "zero_shot_prob": zero_shot_prob
     }
 
-def main():
-    st.title("Tweet Sentiment Analysis")
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-    tweet_input = st.text_area("Enter your tweet:")
-
-    if st.button("Analyze"):
-        if tweet_input:
-            analysis_result = analyze_tweet(tweet_input)
-            st.write("Original Tweet:", analysis_result['tweet'])
-            st.write("BERT Sentiment:", analysis_result['bert_sentiment'])
-            st.write("Zero-Shot Classification:", analysis_result['zero_shot_classification'])
-            st.write("Combined Sentiment:", analysis_result['combined_sentiment'])
-
-            st.write("BERT Sentiment Probability Distribution:")
-            st.bar_chart({"Negative": analysis_result['bert_prob'], "Neutral": 1-analysis_result['bert_prob'], "Positive": analysis_result['bert_prob']})
-            
-            st.write("Zero-Shot Classification Probability Distribution:")
-            st.bar_chart({"Negative": analysis_result['zero_shot_prob'], "Neutral": 1-analysis_result['zero_shot_prob'], "Positive": analysis_result['zero_shot_prob']})
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    data = request.get_json()
+    tweet = data["tweet"]
+    analysis_result = analyze_tweet(tweet)
+    return jsonify(analysis_result)
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
