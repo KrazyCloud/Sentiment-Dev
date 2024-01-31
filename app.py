@@ -57,21 +57,24 @@ def analyze_tweet(tweet):
         "zero_shot_prob": zero_shot_prob
     }
 
-# Streamlit interface
-st.title("Tweet Sentiment Analysis")
+def main():
+    st.title("Tweet Sentiment Analysis")
 
-tweet_input = st.text_area("Enter your tweet:")
+    tweet_input = st.text_area("Enter your tweet:")
 
-if st.button("Analyze"):
-    if tweet_input:
-        analysis_result = analyze_tweet(tweet_input)
-        st.write("Original Tweet:", analysis_result['tweet'])
-        st.write("BERT Sentiment:", analysis_result['bert_sentiment'])
-        st.write("Zero-Shot Classification:", analysis_result['zero_shot_classification'])
-        st.write("Combined Sentiment:", analysis_result['combined_sentiment'])
+    if st.button("Analyze"):
+        if tweet_input:
+            analysis_result = analyze_tweet(tweet_input)
+            st.write("Original Tweet:", analysis_result['tweet'])
+            st.write("BERT Sentiment:", analysis_result['bert_sentiment'])
+            st.write("Zero-Shot Classification:", analysis_result['zero_shot_classification'])
+            st.write("Combined Sentiment:", analysis_result['combined_sentiment'])
 
-        st.write("BERT Sentiment Probability Distribution:")
-        st.bar_chart({"Negative": analysis_result['bert_prob'], "Neutral": 1-analysis_result['bert_prob'], "Positive": analysis_result['bert_prob']})
-        
-        st.write("Zero-Shot Classification Probability Distribution:")
-        st.bar_chart({"Negative": analysis_result['zero_shot_prob'], "Neutral": 1-analysis_result['zero_shot_prob'], "Positive": analysis_result['zero_shot_prob']})
+            st.write("BERT Sentiment Probability Distribution:")
+            st.bar_chart({"Negative": analysis_result['bert_prob'], "Neutral": 1-analysis_result['bert_prob'], "Positive": analysis_result['bert_prob']})
+            
+            st.write("Zero-Shot Classification Probability Distribution:")
+            st.bar_chart({"Negative": analysis_result['zero_shot_prob'], "Neutral": 1-analysis_result['zero_shot_prob'], "Positive": analysis_result['zero_shot_prob']})
+
+if __name__ == "__main__":
+    main()
